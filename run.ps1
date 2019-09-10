@@ -25,7 +25,7 @@ foreach ($Objects in $f) {
     Write-Output "$HostName remove from Active Directory."
     try {
         # Remove-ADComputer -Identity $l.TrimEnd() -Confirm:$False | Out-File $ResultExport -Encoding UTF8 -Append
-        Get-ADComputer $HostName.TrimEnd() | Remove-ADObject -Recursive -Confirm:$False | Out-File $ResultExport -Encoding UTF-8 -Append
+        Get-ADComputer $HostName.TrimEnd() | Remove-ADObject -Recursive -Confirm:$False
         Write-Output "$HostName removed."
     }
     catch {
