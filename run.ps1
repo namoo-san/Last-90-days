@@ -20,12 +20,12 @@ $f = (Get-Content $ExportFile) -as [string[]]
 $i=1
 foreach ($Objects in $f) {
     $HostName = $objects.TrimEnd()
-    
+
     # Remove messages
     Write-Output "$HostName remove from Active Directory."
     try {
         # Remove-ADComputer -Identity $l.TrimEnd() -Confirm:$False | Out-File $ResultExport -Encoding UTF8 -Append
-        Get-ADComputer $HostName.TrimEnd() | Remove-ADObject -Recursive -Confirm:$False
+        Get-ADComputer $HostName.TrimEnd() | Remove-ADObject -Recursive -Confirm:$False | Out-File $ResultExport -Encoding UTF-8 -Append
         Write-Output "$HostName removed."
     }
     catch {
