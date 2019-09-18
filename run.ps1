@@ -6,7 +6,8 @@
 # Set variables
 $ExpireDate = (Get-Date).AddDays(-90)
 $ExportFile = "RemoveComputerList.txt"
-$AuditExport = "Audit-RemoveComputerList.txt"
+$AuditDate = Get-Date -Format "yyyymmdd"
+$AuditExport = "Audit-RemoveComputerList" + $AuditDate + ".txt"
 
 # Export "Computer Account Name" & "Last logon date"
 Search-ADAccount -AccountInactive -DateTime $ExpireDate -ComputersOnly | Format-Table Name,LastLogonDate | Out-File $AuditExport
