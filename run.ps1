@@ -6,14 +6,14 @@
 # Set variables
 $ExpireDate = (Get-Date).AddDays(-90)
 $ExportFile = "RemoveComputerList.txt"
-$AuditDate = Get-Date -Format "yyyymmdd"
+$AuditDate = Get-Date -Format "yyyyMMdd"
 $AuditExport = $AuditDate + "-Audit-RemovedComputersList.txt"
 
 # Export "Computer Account Name" & "Last logon date"
-Search-ADAccount -AccountInactive -DateTime $ExpireDate -ComputersOnly | Format-Table Name,LastLogonDate | Out-File $AuditExport
+Search-ADAccount -AccountInactive -DateTime $ExpireDate -ComputersOnly | Format-Table Name,LastLogonDate | Out-File $AuditExport -Encoding UTF8 -Append
 
 # Export "Computer Account" lists for remove
-Search-ADAccount -AccountInactive -DateTime $ExpireDate -ComputersOnly | Format-Table Name | Out-File $ExportFile
+Search-ADAccount -AccountInactive -DateTime $ExpireDate -ComputersOnly | Format-Table Name | Out-File $ExportFile -Encoding UTF8 -Append
 
 # Remove from Active Directory
 Import-Module ActiveDirectory
