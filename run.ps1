@@ -4,13 +4,13 @@
 # Reference : https://social.technet.microsoft.com/Forums/ja-JP/bad65781-994d-48b5-bd88-2bfe80106aa5/removeadcomputer?forum=powershellja
 
 # Set variables
-$LogDirectory = "C:\Audit-Logs"
+$LogDirectory = "C:\"
 $ExpireDate = (Get-Date).AddDays(-90)
 $AuditDate = Get-Date -Format "yyyyMMdd-hhmmss"
 $ExportFile = $AuditDate + "-RemoveComputersList.txt"
 $AuditExport = $AuditDate + "-Audit-RemovedComputersList.txt"
-$ExportFilePath = $LogDirectory + "\" + $ExportFile
-$AuditFilePath = $LogDirectory + "\" + $AuditExport
+$ExportFilePath = $LogDirectory + $ExportFile
+$AuditFilePath = $LogDirectory + $AuditExport
 
 # Export "Computer Account Name" & "Last logon date"
 Search-ADAccount -AccountInactive -DateTime $ExpireDate -ComputersOnly | Format-Table Name,LastLogonDate | Out-File -FilePath $ExportFilePath
@@ -20,7 +20,7 @@ Search-ADAccount -AccountInactive -DateTime $ExpireDate -ComputersOnly | Format-
 
 # Remove from Active Directory
 Import-Module ActiveDirectory
-$f = (Get-Content $ExportFile) -as [string[]]
+$f = (Get-Content $ExportFilePath) -as [string[]]
 $i=1
 foreach ($Objects in $f) {
     $HostName = $objects.TrimEnd()
