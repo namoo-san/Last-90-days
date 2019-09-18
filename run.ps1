@@ -5,8 +5,8 @@
 
 # Set variables
 $ExpireDate = (Get-Date).AddDays(-90)
-$ExportFile = "RemoveComputerList.txt"
 $AuditDate = Get-Date -Format "yyyyMMdd"
+$ExportFile = $AuditDate + "-RemoveComputersList.txt"
 $AuditExport = $AuditDate + "-Audit-RemovedComputersList.txt"
 
 # Export "Computer Account Name" & "Last logon date"
