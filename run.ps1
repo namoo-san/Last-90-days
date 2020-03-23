@@ -4,7 +4,7 @@
 # Reference : https://social.technet.microsoft.com/Forums/ja-JP/bad65781-994d-48b5-bd88-2bfe80106aa5/removeadcomputer?forum=powershellja
 
 # Set variables
-$LogDirectory = "C:\"
+$LogDirectory = "C:\Audit-Removed"
 $ExpireDate = (Get-Date).AddDays(-90)
 $AuditDate = Get-Date -Format "yyyyMMdd-hhmmss"
 $ExportFile = $AuditDate + "-RemoveComputersList.txt"
@@ -19,17 +19,21 @@ Search-ADAccount -AccountInactive -DateTime $ExpireDate -ComputersOnly | Format-
 Search-ADAccount -AccountInactive -DateTime $ExpireDate -ComputersOnly | Format-Table Name | Out-File -FilePath $AuditFilePath
 
 # Remove from Active Directory
+
+$RemovedObjects = @();
+
 Import-Module ActiveDirectory
-$f = (Get-Content $ExportFilePath) -as [string[]]
+$f = Search-ADAccount -AccountInactive -DateTime $ExpireDate -ComputersOnly
 $i=1
 foreach ($Objects in $f) {
-    $HostName = $objects.TrimEnd()
+    $HostName = $objects.Name
 
     # Remove messages
     Write-Output "$HostName remove from Active Directory."
     try {
         # Remove-ADComputer -Identity $l.TrimEnd() -Confirm:$False | Out-File $ResultExport -Encoding UTF8 -Append
-        Get-ADComputer $HostName.TrimEnd() | Remove-ADObject -Recursive -Confirm:$False
+        Get-ADComputer $HostName | Remove-ADObject -Recursive -Confirm:$False
+        $RemovedObjects += $HostName
         Write-Output "$HostName removed."
     }
     catch {
@@ -37,3 +41,14 @@ foreach ($Objects in $f) {
     }
     $i++
 }
+
+$enc = [System.Text.Encoding]::GetEncoding('ISO-8859-1')
+$utf8Bytes = [System.Text.Encoding]::UTF8.GetBytes($args)
+
+$notificationPayload = @{
+    text = $enc.GetString($utf8Bytes);
+    username = "Last-90-days";
+    icon_emoji = ":wastebasket:"
+}
+
+# Invoke-RestMethod -Uri "https://hooks.slack.com/services/xxxxxxxxx/xxxxxxxxx/xxxxxxxxxxxxxxxxxxxxxxxx" -Method Post -Body (ConvertTo-Json $notificationPayload) 
